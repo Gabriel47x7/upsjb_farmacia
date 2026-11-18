@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Categorias;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class CategoryController extends Controller
 {
@@ -12,39 +13,31 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $categorias = Categorias::orderBy('nombre')->get();
-            
-        return view('settings.categorias.index', compact('categorias'));
+        $categorias = Categorias::all();
+        return view("settings.categorias.index", compact('categorias'));
     }
 
     /**
      * Show the form for creating a new resource.
      */
-public function create()
+    public function create()
     {
-        return view('settings.categorias.create');
+        return view("settings.categorias.create");
     }
 
     /**
      * Store a newly created resource in storage.
      */
-   public function store(Request $request)
-{
-    // Validar los campos según tu base de datos
-    $request->validate([
-        'nombre' => 'required|string|max:255',
-        'descripcion' => 'nullable|string',
-    ]);
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'nombre' => 'required|max:50|unique:categorias',
+            'descripcion' => 'nullable|max:255',
+        ]);
 
-    // Guardar en la base de datos
-    Categorias::create([
-        'nombre' => $request->nombre,
-        'descripcion' => $request->descripcion,
-    ]);
-
-    // Redireccionar al listado con un mensaje de éxito
-    return redirect()->route('categorias.index')->with('success', 'Categoría creada con éxito.');
-}
+        Categorias::create($validated);
+        return to_route('categorias.index')->with('ok', 'Categoría registrada correctamente.');
+    }
 
     /**
      * Display the specified resource.
@@ -67,7 +60,18 @@ public function create()
      */
     public function update(Request $request, Categorias $categoria)
     {
-        //
+        $validated = $request->validate([
+            'nombre' => [
+                'required',
+                'max:50',
+                Rule::unique('categorias', 'nombre')->ignore($categoria->id),
+            ],
+            'descripcion' => 'nullable|max:255',
+        ]);
+
+        $categoria->update($validated);
+
+        return to_route('categorias.index')->with('ok', 'Categoría actualizada correctamente.');
     }
 
     /**
@@ -75,6 +79,14 @@ public function create()
      */
     public function destroy(Categorias $categoria)
     {
-        //
+        // Ojo: verifica si tu relación en el modelo se llama 'medicines' o 'medicamentos'
+        if (method_exists($categoria, 'medicines') && $categoria->medicines()->exists()) {
+            return to_route('categorias.index')
+                ->with('error', 'No se puede eliminar la categoría porque tiene medicamentos asociados.');
+        }
+
+        $categoria->delete();
+
+        return to_route('categorias.index')->with('ok', 'Categoría eliminada correctamente.');
     }
 }
