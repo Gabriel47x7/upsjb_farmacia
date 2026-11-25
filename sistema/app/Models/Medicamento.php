@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['categoria_id', 'nombre', 'precio', 'stock'])]
+#[Fillable(['categoria_id', 'nombre', 'precio', 'stock', 'image'])]
 class Medicamento extends Model
 {
     protected function casts(): array
@@ -20,7 +20,7 @@ class Medicamento extends Model
 
     public function categoria(): BelongsTo
     {
-        return $this->belongsTo(Categoria::class);
+        return $this->belongsTo(Categorias::class);
     }
 
     public function detallesVenta(): HasMany
