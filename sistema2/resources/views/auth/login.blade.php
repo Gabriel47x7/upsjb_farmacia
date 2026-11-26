@@ -1,12 +1,17 @@
 <!doctype html>
-<html lang="es" dir="ltr">
+<html lang="es" dir="ltr" translate="no">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="San Juan – Sistema de Venta de Medicamentos">
+  <meta name="google" content="notranslate">
+  <meta name="theme-color" content="#ff0a41">
   <title>FARM SJB | Iniciar sesión</title>
+  <link rel="manifest" href="{{ asset('manifest.json') }}">
+  <link rel="apple-touch-icon" href="{{ asset('icons/icon-192.png') }}">
   <link rel="stylesheet" href="{{ asset('css/bootstrap.css') }}">
   <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
+  <script src="{{ asset('js/pwa.js') }}" defer></script>
 </head>
 
 <body>
