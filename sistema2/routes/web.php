@@ -29,7 +29,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard.index');
     Route::resource('customers', CustomerController::class)->except('show');
     Route::resource('sales', SaleController::class)
-        ->except(['edit', 'update'])
+        ->middlewareFor('edit', 'role:Administrador')
+        ->middlewareFor('update', 'role:Administrador')
         ->middlewareFor('destroy', 'role:Administrador');
 
     // Administrador y Químico farmacéutico
